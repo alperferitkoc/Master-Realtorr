@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Realtor Sunumu</title>
+    <!-- GÜNCELLENDİ: Sekme İkonu (Favicon) Eklendi -->
+    <link rel="icon" type="image/png" href="https://iili.io/KZ2a0uV.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Renk Paleti (Logodan Esinlenildi) */
+            --color-primary-yellow: #FFD200; /* Ana Sarı */
+            --color-dark-gray: #333333;      /* Koyu Gri/Siyah */
+            --color-white: #FFFFFF;
+            --color-background-light: #f8f9fa; /* Çok Açık Gri Arka Plan */
+            --color-text-primary: #212529; /* Ana Metin Rengi */
+            --color-text-secondary: #6c757d; /* İkincil Metin Rengi */
+            --color-success: #198754; /* Yeşil Tik */
+            --color-danger: #dc3545;  /* Kırmızı Çarpı */
+        }
+
+        /* Temel Sayfa Sıfırlama */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-background-light);
+            color: var(--color-text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* --- Ana Sunum Konteyneri --- */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            perspective: 1px; 
+        }
+
+        /* --- Slayt Temelleri --- */
+        .slide {
+            width: 100%;
+            height: 100vh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5vw 8vw; 
+            position: relative;
+            overflow: hidden; 
+            scroll-snap-align: start; 
+            background-color: var(--color-white); 
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1200px; 
+            z-index: 2;
+            position: relative;
+        }
+
+        .slide.bg-light {
+            background-color: var(--color-background-light);
+            color: var(--color-text-primary);
+        }
+        .slide.bg-dark {
+            background-color: var(--color-dark-gray);
+            color: var(--color-white);
+        }
+        .slide.bg-yellow {
+            background-color: var(--color-primary-yellow);
+            color: var(--color-dark-gray);
+        }
+        
+        .slide-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            filter: brightness(0.5); 
+        }
+        .slide.bg-image .slide-content {
+            color: var(--color-white);
+        }
+
+        /* --- Başlık Stilleri --- */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        h1 { font-size: 3.5rem; } 
+        h2 { font-size: 2.5rem; } 
+        h3 { font-size: 1.75rem; } 
+        p, li {
+            font-size: 1.1rem; 
+            margin-bottom: 1rem;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .highlight-yellow {
+            background-color: var(--color-primary-yellow);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--color-dark-gray);
+        }
+
+        /* --- Slayt Düzenleri (Layouts) --- */
+
+        /* 1. Title_Intro (Başlık Slaytı) */
+        .layout-title-intro {
+            text-align: center;
+        }
+        .layout-title-intro h1 {
+            font-size: 5rem; 
+            font-weight: 800;
+            color: var(--color-primary-yellow);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .layout-title-intro .subtitle {
+            font-size: 1.5rem; 
+            font-weight: 300;
+            color: var(--color-white);
+            max-width: 700px;
+            margin: 1rem auto 0 auto;
+        }
+        .layout-title-intro .main-logo {
+            width: 200px; /* Logo boyutu (Slayt 1) */
+            height: auto;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); /* Siyah Gölge */
+        }
+
+
+        /* 2. Section_Header (Ara Başlık Slaytı) */
+        .layout-section-header {
+            text-align: center;
+        }
+        .layout-section-header h2 {
+            font-size: 4rem; 
+            font-weight: 800;
+        }
+        .layout-section-header .emphasis-text {
+            font-size: 1.5rem; 
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            max-width: 800px;
+            margin: 1rem auto 0 auto;
+        }
+        .slide.bg-dark .layout-section-header .emphasis-text {
+            color: #ccc;
+        }
+        
+        .layout-section-header .section-logo {
+            width: 130px; /* Arka Plansız Logo (Slayt 4) */
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+        .slide.bg-dark .layout-section-header .section-logo {
+            filter: drop-shadow(0 0 12px rgba(255, 210, 0, 0.6)); /* Sarı Parlama */
+        }
+
+        .layout-section-header .section-logo-wide {
+            width: 270px; /* Yazılı Logo (Slayt 2) */
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.2));
+        }
+
+        /* 3. Bleed_Image_Right (Sağa Yaslı Görsel) */
+        .layout-bleed-image-right .slide-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .bleed-image-content .bleed-image-visual {
+            width: 100%;
+            height: 70vh; 
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .bleed-image-content ul li {
+            position: relative;
+            padding-left: 35px;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+        }
+        .bleed-image-content ul li::before {
+            content: '✓'; 
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-primary-yellow);
+            background-color: var(--color-dark-gray);
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .bleed-image-content .price-tag {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+        }
+
+        /* 4. Comparison_Table (Karşılaştırma Tablosu) */
+        .layout-comparison-table h2 {
+            text-align: center;
+            font-size: 2.2rem; /* Küçültüldü */
+            margin-bottom: 1rem; /* Yukarı çekildi */
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 0.9rem; /* Daraltıldı */
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .comparison-table th {
+            background-color: var(--color-dark-gray);
+            color: var(--color-white);
+            font-size: 1.15rem; /* Küçültüldü */
+            font-weight: 600;
+        }
+        .comparison-table td {
+            background-color: var(--color-white);
+            font-size: 1.0rem; /* Küçültüldü */
+        }
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        .comparison-table tr:nth-child(even) td {
+            background-color: var(--color-background-light);
+        }
+        .icon-check {
+            color: var(--color-success);
+            font-size: 1.6rem; /* Küçültüldü */
+            font-weight: 700;
+        }
+        .icon-times {
+            color: var(--color-danger);
+            font-size: 1.6rem; /* Küçültüldü */
+            font-weight: 700;
+        }
+
+        /* 5. Tiled_Text_With_Icons (İkonlu Metin Kutuları) */
+        .layout-tiled-text-icons h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        .tiles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .tile {
+            background-color: var(--color-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--color-primary-yellow);
+        }
+        .tile-icon {
+            font-size: 3rem;
+            color: var(--color-dark-gray);
+            margin-bottom: 1rem;
+        }
+        .tile h3 {
+            font-size: 1.4rem;
+            color: var(--color-text-primary);
+        }
+        .tile p {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0;
+        }
+        
+        /* 6. Text_Highlight_Split (Vurgulu Metin & Bölünmüş) */
+        .layout-text-highlight-split .slide-content {
+            display: grid;
+            grid-template-columns: 3fr 7fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .highlight-box {
+            text-align: center;
+        }
+        .highlight-box .highlight-number {
+            font-size: 7rem; 
+            font-weight: 800;
+            color: var(--color-primary-yellow);
+            line-height: 1;
+        }
+        .highlight-box .highlight-text {
+            font-size: 1.5rem; 
+            font-weight: 600;
+            color: var(--color-dark-gray);
+        }
+        .description-box h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .description-box p {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+        }
+        .description-box .emphasis {
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        /* 7. Call_To_Action (Kapanış) */
+        .layout-call-to-action {
+            text-align: center;
+        }
+        .layout-call-to-action h2 {
+            font-size: 3rem;
+            color: var(--color-primary-yellow);
+            margin-top: 5vh; /* Slayt 10 içeriği aşağı iter */
+        }
+        .layout-call-to-action .subtitle {
+            font-size: 1.5rem; 
+            font-weight: 300;
+            color: var(--color-white); 
+            max-width: 700px;
+            margin: 1rem auto 2rem auto;
+        }
+        .cta-contact-info p {
+            font-size: 1.2rem;
+            color: var(--color-white); 
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Tıklanabilir linklerin beyaz kalması için */
+        .cta-contact-info p a {
+            color: var(--color-white);
+            text-decoration: none;
+        }
+        .cta-contact-info p a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Kapanış Slaytı Logo Stili (Slayt 10) */
+        .layout-call-to-action .footer-logo {
+            width: 180px; /* Yuvarlak logo */
+            height: auto;
+            margin-top: 3rem;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5)); 
+        }
+
+
+        /* --- Scroll Down Göstergesi --- */
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%); /* Bu satır ortalamayı sağlar */
+            z-index: 10;
+            color: var(--color-white);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 300;
+            opacity: 0.7;
+        }
+        .scroll-down::after {
+            content: '↓';
+            display: block;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .slide.bg-light .scroll-down,
+        .slide.bg-yellow .scroll-down {
+            color: var(--color-dark-gray);
+        }
+
+
+        /* --- Mobil Uyum (Responsive) --- */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide {
+                padding: 15vw 8vw; 
+                height: auto; 
+                min-height: 100vh; 
+            }
+
+            /* Başlık Slaytı */
+            .layout-title-intro h1 {
+                font-size: 3.5rem;
+            }
+            .layout-title-intro .subtitle {
+                font-size: 1.2rem;
+            }
+            .layout-title-intro .main-logo {
+                width: 150px; 
+            }
+
+
+            /* Ara Başlık */
+            .layout-section-header h2 {
+                font-size: 2.8rem;
+            }
+            .layout-section-header .emphasis-text {
+                font-size: 1.2rem;
+            }
+            
+            .layout-section-header .section-logo {
+                width: 90px; /* Slayt 4 Mobil */
+            }
+            
+            .layout-section-header .section-logo-wide {
+                width: 200px; /* Slayt 2 Mobil */
+            }
+
+            /* Sağa Yaslı Görsel */
+            .layout-bleed-image-right .slide-content {
+                grid-template-columns: 1fr; 
+                gap: 2rem;
+            }
+            .bleed-image-content .bleed-image-visual {
+                height: 40vh; 
+                order: -1; 
+            }
+            .bleed-image-content ul li {
+                font-size: 1rem;
+            }
+
+            /* Karşılaştırma Tablosu (Slayt 7 Mobil) */
+            .layout-comparison-table h2 {
+                font-size: 1.6rem; 
+                margin-bottom: 1rem;
+            }
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            .comparison-table {
+                width: 100%;
+                min-width: 600px; 
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+            }
+            .icon-check, .icon-times {
+                font-size: 1.3rem;
+            }
+
+            /* Vurgulu Metin & Bölünmüş */
+            .layout-text-highlight-split .slide-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            .description-box {
+                order: 1;
+            }
+            .description-box h3 {
+                font-size: 1.5rem;
+            }
+            .description-box p {
+                font-size: 1rem;
+            }
+
+            /* Kapanış */
+            .layout-call-to-action h2 {
+                font-size: 2.2rem;
+                margin-top: 0; /* Mobil için dikey ortalama sıfırlandı */
+            }
+            .layout-call-to-action .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .layout-call-to-action .footer-logo {
+                width: 150px; /* Yuvarlak logo mobil */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+
+        <!-- SLAYT 1: Başlık (Logo Eklendi) --><section class="slide bg-image layout-title-intro">
+            <!-- Arka Plan Görseli --><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjkzNnwwfDF8c2VhcmNofDR8fG1vZGVybiUyMGhvdXNlJTIwZXh0ZXJpb3J8ZW58MHx8fHwxNzE5OTM2MTg5fDA&ixlib.rb-4.0.3&q=80&w=1080" 
+                 alt="[Modern bir konut projesinin dış cephesi]" 
+                 class="slide-background"
+                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/333333/ffffff?text=Modern+Proje';">
+
+            <div class="slide-content">
+                <!-- GÜNCELLENDİ (Link 1) --><img src="https://iili.io/KZ2a0uV.png" alt="Master Realtor Logosu" class="main-logo"> 
+                <h1>Master Realtor</h1>
+                <p class="subtitle">"Maliyetine Ev" Projelerinin Özel Satış Gücüne Katılın ve Kazancınızı Zirveye Taşıyın.</p>
+            </div>
+            <!-- Sadece ilk slaytta kaydır yazısı var -->
+            <a href="#slide-2" class="scroll-down">Kaydır</a>
+        </section>
+
+        <!-- SLAYT 2: Biz Kimiz? --><section id="slide-2" class="slide bg-light layout-section-header">
+            <div class="slide-content">
+                <!-- GÜNCELLENDİ (Link 2) --><img src="https://iili.io/KZ2acyQ.md.png" alt="Master Realtor Logosu" class="section-logo-wide">
+                <h2>Biz Kimiz?</h2>
+                <p class="emphasis-text">"Maliyetine Ev" ile proje geliştiriyor, "Master Realtor" ile bu projeler için özel portföy sağlıyor ve tek yetkili olarak satışını yönetiyoruz.</p>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 3: Neden Master Realtor? --><section id="slide-3" class="slide layout-bleed-image-right">
+            <div class="slide-content bleed-image-content">
+                <!-- Metin Alanı --><div class="bleed-image-text">
+                    <h2>Neden Master Realtor?</h2>
+                    <ul>
+                        <li>
+                            <strong>Tek Satış Yetkilisi Olun</strong><br>
+                            "Maliyetine Ev" projelerinin satışında tek yetkili siz olun.
+                        </li>
+                        <li>
+                            <strong>Rekabetçi Fiyatlar</strong><br>
+                            Piyasadaki en rekabetçi fiyat politikası ile kolay ve hızlı satış yapın.
+                        </li>
+                        <li>
+                            <strong>Ödeme Kolaylığı</strong><br>
+                            Faizsiz, bankasız ve sabit taksitli alım politikasıyla müşterilerinize cazip seçenekler sunun.
+                        </li>
+                        <li>
+                            <strong>Sürekli Portföy Akışı</strong><br>
+                            Emlak profesyonelleri için sürekli ve kazançlı bir portföy akışı sağlıyoruz.
+                        </li>
+                    </ul>
+                </div>
+                <!-- Görsel Alanı --><div class="bleed-image-visual-wrapper">
+                    <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjkzNnwwfDF8c2VhcmNofDEwfHxyZWFsJTIwZXN0YXRlJTIwc2FsZXxlbnwwfHx8fDE3MTk5MzYyMzh8MA&ixlib.rb-4.0.3&q=80&w=1080" 
+                         alt="[Bir emlak danışmanının müşterisine ev sunumu]" 
+                         class="bleed-image-visual"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x800/eeeeee/333333?text=Sat%C4%B1%C5%9F+Sunumu';">
+                </div>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 4: Kariyer Yolunuzu Seçin --><section id="slide-4" class="slide bg-dark layout-section-header">
+            <div class="slide-content">
+                <!-- GÜNCELLENDİ (Link 3) --><img src="https://iili.io/KZ2aa8x.png" alt="Master Realtor Logosu" class="section-logo">
+                <h2 style="color: var(--color-primary-yellow);">Kariyer Yolunuzu Seçin</h2>
+                <p class="emphasis-text">Size en uygun modeli seçerek Master Realtor ailesine katılın ve kazanmaya başlayın. İki farklı yol, iki farklı kazanç fırsatı.</p>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 5: Kariyer Yolu 1: Ofissiz Emlakçı --><section id="slide-5" class="slide layout-bleed-image-right">
+            <div class="slide-content bleed-image-content">
+                <!-- Metin Alanı --><div class="bleed-image-text">
+                    <h3>Kariyer Yolu 1:</h3>
+                    <h2>Ofissiz Emlakçı</h2>
+                    <p class="price-tag">
+                        <strong>Üyelik Bedeli:</strong> 5.000 TL (Bir kereye mahsus)
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Komisyon Kazancı: <span class="highlight-yellow">%30</span></strong><br>
+                            Alınan emlakçı komisyonunun %30'unu kazanın.
+                        </li>
+                        <li>
+                            <strong>MYK5 Belgesiz Başlangıç</strong><br>
+                            Sektöre hızlı bir giriş yapın, belge zorunluluğu olmadan kazanç sağlayın.
+                        </li>
+                        <li>
+                            <strong>Link Paylaşım Sistemi</strong><br>
+                            Emlak Sepette aracılığıyla Türkiye'de ilk olan link paylaşım sistemi ile satış yapın.
+                        </li>
+                        <li>
+                            <strong>Sınırsız Portföy Edinme</strong><br>
+                            Sistemimizdeki tüm portföylere erişim sağlayın.
+                        </li>
+                    </ul>
+                </div>
+                <!-- Görsel Alanı --><div class="bleed-image-visual-wrapper">
+                    <img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjkzNnwwfDF8c2VhcmNofDd8fGZyZWVsYW5jZXIlMjBsYXB0b3AlMjBjYWZlfGVufDB8fHx8fDE3MTk5MzYyODN8MA&ixlib.rb-4.0.3&q=80&w=1080" 
+                         alt="[Bir kafede laptopuyla çalışan serbest çalışan]" 
+                         class="bleed-image-visual"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x800/eeeeee/333333?text=Ofissiz+Emlak%C3%A7%C4%B1';">
+                </div>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 6: Kariyer Yolu 2: Dijital Danışman --><section id="slide-6" class="slide bg-light layout-bleed-image-right">
+            <div class="slide-content bleed-image-content">
+                <!-- Metin Alanı --><div class="bleed-image-text">
+                    <h3>Kariyer Yolu 2 (Önerilen):</h3>
+                    <h2>Dijital Danışman</h2>
+                    <p class="price-tag">
+                        <strong>Danışmanlık Bedeli:</strong> Aylık 3.000 TL
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Komisyon Kazancı: <span class="highlight-yellow">%75</span></strong><br>
+                            Alınan komisyonun %75'ini alarak kazancınızı maksimize edin.
+                        </li>
+                        <li>
+                            <strong>Ücretsiz Data Desteği</strong><br>
+                            Reklamlardan gelen potansiyel müşteri (data) desteğine ücretsiz erişin.
+                        </li>
+                        <li>
+                            <strong>Kapsamlı Eğitim & Sertifika</strong><br>
+                            80 Saatlik uzmanlık eğitimi, sertifika ve ücretsiz kitap hediyesi.
+                        </li>
+                        <li>
+                            <strong>Kendi Ekibini Kur</strong><br>
+                            Dilediğiniz kadar satış danışmanına rehberlik yapın, kendi alt ekibinizi kurun.
+                        </li>
+                    </ul>
+                </div>
+                <!-- Görsel Alanı --><div class="bleed-image-visual-wrapper">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjkzNnwwfDF8c2VhcmNofDExfHxwcm9mZXNzaW9uYWwlMjB0ZWFtJTIwbWVldGluZ3xlbnwwfHx8fDE3MTk5MzYzMTF8MA&ixlib.rb-4.0.3&q=80&w=1080" 
+                         alt="[Profesyonel bir ekibin toplantı yapması]" 
+                         class="bleed-image-visual"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x800/eeeeee/333333?text=Dijital+Dan%C4%B1%C5%9Fman';">
+                </div>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 7: Karşılaştırma Tablosu --><section id="slide-7" class="slide layout-comparison-table">
+            <div class="slide-content">
+                <h2>Neden <span style="color: var(--color-primary-yellow);">Dijital Danışman</span> Olmalısınız?</h2>
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Özellik</th>
+                                <th>Ofissiz Emlakçı</th>
+                                <th>Dijital Danışman</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Komisyon Kazanç Oranı</td>
+                                <td><strong style="font-size: 1.2em;">%30</strong></td>
+                                <td><strong style="color: var(--color-success); font-size: 1.2em;">%75</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Link ile Satış (Emlak Sepette)</td>
+                                <td><span class="icon-check">&check;</span></td>
+                                <td><span class="icon-check">&check;</span></td>
+                            </tr>
+                            <tr>
+                                <td>Sınırsız Portföy İmkanı</td>
+                                <td><span class="icon-check">&check;</span></td>
+                                <td><span class="icon-check">&check;</span></td>
+                            </tr>
+                            <tr>
+                                <td>MYK5 Belgesi Zorunluluğu</td>
+                                <td>Gerekmez</td>
+                                <td>Gerekli (Profesyonellik)</td>
+                            </tr>
+                            <tr>
+                                <td>Ücretsiz Data (Müşteri) Desteği</td>
+                                <td><span class="icon-times">&times;</span></td>
+                                <td><span class="icon-check">&check;</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kapsamlı Eğitim (80 Saat)</td>
+                                <td><span class="icon-times">&times;</span></td>
+                                <td><span class="icon-check">&check;</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kendi Ekibini Kurma Yetkisi</td>
+                                <td><span class="icon-times">&times;</span></td>
+                                <td><span class="icon-check">&check;</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 8: Kapsamlı Eğitim Programı --><section id="slide-8" class="slide bg-light layout-tiled-text-icons">
+            <div class="slide-content">
+                <h2>Kapsamlı Eğitim Programı (Toplam 80 Saat)</h2>
+                <div class="tiles-container">
+                    <!-- Kutu 1: Amaç --><div class="tile">
+                        <div class="tile-icon">🎯</div>
+                        <h3>Amaç</h3>
+                        <p>Sektördeki en güncel bilgilerle donatılmış, profesyonel ve yetkin <span class="highlight-yellow">dijital danışmanlar</span> yetiştirmek.</p>
+                    </div>
+                    <!-- Kutu 2: İçerik --><div class="tile">
+                        <div class="tile-icon">📚</div>
+                        <h3>İçerik</h3>
+                        <p>Teorik eğitim ve pratik saha uygulamaları bir arada. Program sonunda sertifika ve ücretsiz kitap hediyesi.</p>
+                    </div>
+                    <!-- Kutu 3: Süre --><div class="tile">
+                        <div class="tile-icon">🗓️</div>
+                        <h3>Süre</h3>
+                        <p>10 ay boyunca, ayda 1 tam gün (8 saat). Toplam 80 saatlik yoğunlaştırılmış uzmanlık programı.</p>
+                    </div>
+                    <!-- Kutu 4: Kazanım --><div class="tile">
+                        <div class="tile-icon">📈</div>
+                        <h3>Kazanım</h3>
+                        <p>Profesyonel satış teknikleri, müşteri ilişkileri yönetimi ve portföy kazanımı konusunda tam uzmanlık.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 9: Bir Sonraki Adım: Broker Olun --><section id="slide-9" class="slide layout-text-highlight-split">
+            <div class="slide-content">
+                <!-- Vurgu Kutusu --><div class="highlight-box">
+                    <div class="highlight-number">6</div>
+                    <div class="highlight-text">AY STAJ</div>
+                </div>
+                <!-- Açıklama Kutusu --><div class="description-box">
+                    <h3>Bir Sonraki Adım:</h3>
+                    <h2>Kendi Ofisinizi Açın (Broker Olun)</h2>
+                    <p>Kazancınızı bir üst seviyeye taşımak ve Brokerlığa yükselmek çok kolay.</p>
+                    <p>Tek şart: Herhangi bir gayrimenkul firmasında <span class="emphasis">6 ay staj</span> yapmış olmanız. Bu adımla kendi emlak ofisinizi açma ve kendi işinizin patronu olma yolunda ilk adımı atın.</p>
+                </div>
+            </div>
+            <!-- Kaydır yazısı kaldırıldı -->
+        </section>
+
+        <!-- SLAYT 10: Linkler ve Logo değişti --><section id="slide-10" class="slide bg-dark layout-call-to-action">
+            <div class="slide-content">
+                <h2>Birlikte Büyüyelim</h2>
+                <p class="subtitle">Fırsatları görüşmek ve Master Realtor ailesine katılmak için bize hemen ulaşın.</p>
+                <div class="cta-contact-info">
+                    <!-- Linkler eklendi -->
+                    <p><a href="https://www.masterrealtor.com" target="_blank">www.masterrealtor.com</a></p>
+                    <p><a href="https://www.emlaksepette.com" target="_blank">www.emlaksepette.com</a></p>
+                </div>
+                <!-- GÜNCELLENDİ (Link 4) --><img src="https://iili.io/KZ2a0uV.png" alt="Master Realtor Logosu" class="footer-logo">
+            </div>
+        </section>
+
+    </div> <!-- .presentation-container sonu --></body>
+</html>
